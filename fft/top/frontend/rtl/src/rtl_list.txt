@@ -1,3 +1,0 @@
-xxx.sv
-xxx_ctrl.sv
-xxx_proc.sv
