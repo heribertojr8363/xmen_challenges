@@ -18,10 +18,11 @@ module tb;
 
 	logic clk, rst;
 	logic [DATA_WIDTH - 1:0] num_i;
-	logic [DATA_WIDTH - 1:0] num_o;
+	logic [DATA_WIDTH - 1:0] num_o, maior;
 	logic [DATA_WIDTH-1:0] number [0:254];
+	logic [DATA_WIDTH-1:0] erro [0:254];
 
-	int n = 5;
+	int n = 10;
 
 	log #(.DATA_WIDTH(DATA_WIDTH)) dut
 	(
@@ -36,12 +37,16 @@ module tb;
 	begin
 		$readmemb("/home/heriberto.fonseca/Desktop/Microeletronica/Desafios_BRXMEN/log/top/frontend/rtl/tb/tabela_log2.txt", number);
 		reset_module();
-		test(n, 0);
-		$display("LOG2 (REFMOD): INDETERMINADO. LOG2 (DUT): %f \n", ($itor(num_o*0.03125))); 
+		//test(n, 0);
+		//$display("LOG2 (REFMOD): INDETERMINADO. LOG2 (DUT): %f \n", ($itor(num_o*0.03125))); 
 		for (int i = 1; i < 256 ; i++) begin
 			test(n,i);
-			$display("LOG2 (REFMOD): %f. LOG2 (DUT): %f \n",($itor((number[i-1])*0.03125)), ($itor(num_o*0.03125))); 
+			$display("LOG2 (REFMOD): %f. LOG2 (DUT): %f \n",($itor((number[i-1])*0.03125)), ($itor(num_o*0.03125)));
+			erro_rel(i);
+			$display("ERRO RELATIVO: %f \n",($itor(erro[i-1]*0.03125)));
+			//maior_rel(i);
 		end
+		//$display("MAIOR ERRO RELATIVO: %f \n",($itor(maior*0.03125)));
 		$finish();
 	end
 
@@ -60,6 +65,20 @@ module tb;
 			#10ns clk = ~clk;
 		end
 	endtask
+
+	task erro_rel (int l);
+		if(number[l-1] > num_o)
+			erro[l-1] = number[l-1] - num_o;
+		else
+			erro[l-1] = num_o - number[l-1];
+	endtask
+
+	/*task maior_rel (int l);
+		if(erro[l] > erro[l-1])
+			maior = erro[l];
+		else
+			maior = erro[l-1];
+	endtask*/
 
 	task reset_module;
 		clk = 1'b0;
