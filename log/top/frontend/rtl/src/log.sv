@@ -51,8 +51,8 @@ module log #(parameter DATA_WIDTH = 8)
             end
 
 			if(valid) begin
-				number_o[7:5] = e;
-				number_o[4:0] = c;
+				number_o[7:5] <= e;
+				number_o[4:0] <= c;
 				//$display("NUMBER_O = %d", number_o);
 			end
 
